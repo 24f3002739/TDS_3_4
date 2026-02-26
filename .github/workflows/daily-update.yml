@@ -1,0 +1,27 @@
+name: Daily DevSync Update
+
+on:
+  schedule:
+    # This runs at 04:30 UTC every day.
+    - cron: '30 4 * * *'
+  workflow_dispatch: # Allows you to trigger it manually for testing
+
+jobs:
+  update-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Required step including your specific email identifier
+      - name: Configure for 24f3002739@ds.study.iitm.ac.in
+        run: |
+          git config --global user.name "DevSync Automation"
+          git config --global user.email "24f3002739@ds.study.iitm.ac.in"
+
+      - name: Create daily log entry
+        run: |
+          echo "Last automated sync: $(date)" > daily_sync.log
+          git add daily_sync.log
+          git commit -m "Automated daily update for compliance [skip ci]" || echo "No changes to commit"
+          git push
